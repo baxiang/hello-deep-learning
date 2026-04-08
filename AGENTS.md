@@ -30,14 +30,41 @@ Each chapter folder is independent. No shared modules between chapters.
 
 **Code:** Each Python file must be independently runnable. No cross-chapter imports.
 
-## Commands
+## Development Environment
 
-- Run a code file: `python chXX-章节名/code/文件名.py`
-- Python dependencies: `pip install numpy matplotlib`
+### uv (Python Package Manager)
+
+```bash
+# Initialize environment
+uv venv
+source .venv/bin/activate
+uv pip install -e ".[dev]"
+
+# Install new package
+uv pip install <package>
+
+# Run code
+python chXX-章节名/code/文件名.py
+```
+
+### VSCode + Jupyter
+
+- Use `.venv/bin/python` as interpreter
+- Install recommended extensions (see `.vscode/extensions.json`)
+- Jupyter notebooks: select kernel → `.venv/bin/python`
+- Format: Ruff auto-format on save
+
+### Commands
+
+- Run code: `python chXX-章节名/code/文件名.py`
+- Start Jupyter: `jupyter notebook` or `jupyter lab`
+- Format: `ruff format .`
+- Lint: `ruff check .`
 
 ## Non-obvious Context
 
-- Code examples use only NumPy (no PyTorch/TensorFlow). This is intentional — the book teaches from scratch.
-- Chapter numbering uses Chinese characters in folder names (e.g., `ch01-python基础/`).
-- `.venv/` and `.ruff_cache/` are local dev artifacts, already in `.gitignore`.
-- No test framework, no lint config. This is a notes repo, not a software project.
+- Code uses only NumPy (no PyTorch/TensorFlow) — intentional for learning from scratch
+- Chapter folders use Chinese names (e.g., `ch01-python基础/`)
+- `.venv/` and `.ruff_cache/` are local dev artifacts (in `.gitignore`)
+- No test framework, no lint CI — this is a notes repo, not software
+- Python version: 3.13 (see `.python-version`)

@@ -1,0 +1,46 @@
+[project]
+name = "hello-deep-learning"
+version = "0.1.0"
+description = "从零开始深度学习学习笔记"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "numpy>=1.21.0",
+    "matplotlib>=3.4.0",
+    "jupyter>=1.0.0",
+    "notebook>=6.4.0",
+    "ipykernel>=6.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "ruff>=0.1.0",
+    "ipython>=8.0.0",
+]
+
+[tool.uv]
+# uv 配置
+index-url = "https://pypi.org/simple"
+
+# 使用 .venv 目录
+cache-dir = ".uv-cache"
+
+[tool.ruff]
+# Ruff 配置
+line-length = 88
+target-version = "py310"
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle 错误
+    "W",   # pycodestyle 警告
+    "F",   # pyflakes
+    "I",   # isort
+]
+ignore = [
+    "E501",  # 行太长（在笔记中允许）
+]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
