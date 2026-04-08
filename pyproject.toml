@@ -3,7 +3,7 @@ name = "hello-deep-learning"
 version = "0.1.0"
 description = "从零开始深度学习学习笔记"
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.13"
 dependencies = [
     "numpy>=2.0",
     "matplotlib>=3.9",
