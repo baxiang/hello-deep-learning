@@ -32,20 +32,23 @@ Each chapter folder is independent. No shared modules between chapters.
 
 ## Development Environment
 
-### uv (Python Package Manager)
+### uv (Modern Python Package Manager)
 
 ```bash
-# Initialize environment
-uv venv
-source .venv/bin/activate
-uv pip install -e ".[dev]"
-
-# Install new package
-uv pip install <package>
+# Install all dependencies (creates .venv automatically)
+uv sync --all-groups
 
 # Run code
-python chXX-章节名/code/文件名.py
+uv run python chXX-章节名/code/文件名.py
+
+# Add new package
+uv add <package>
+
+# Start Jupyter
+uv run jupyter notebook
 ```
+
+**Important:** Use `uv sync` / `uv add`, NOT `uv pip install`.
 
 ### VSCode + Jupyter
 
@@ -56,15 +59,16 @@ python chXX-章节名/code/文件名.py
 
 ### Commands
 
-- Run code: `python chXX-章节名/code/文件名.py`
-- Start Jupyter: `jupyter notebook` or `jupyter lab`
-- Format: `ruff format .`
-- Lint: `ruff check .`
+- Run: `uv run python chXX-章节名/code/文件名.py`
+- Jupyter: `uv run jupyter notebook`
+- Format: `uv run ruff format .`
+- Lint: `uv run ruff check .`
 
 ## Non-obvious Context
 
 - Code uses only NumPy (no PyTorch/TensorFlow) — intentional for learning from scratch
 - Chapter folders use Chinese names (e.g., `ch01-python基础/`)
-- `.venv/` and `.ruff_cache/` are local dev artifacts (in `.gitignore`)
+- `.venv/`, `.uv-cache/`, `.ruff_cache/` are local dev artifacts (in `.gitignore`)
+- `uv.lock` should be committed — it pins exact versions for reproducibility
 - No test framework, no lint CI — this is a notes repo, not software
 - Python version: 3.13 (see `.python-version`)

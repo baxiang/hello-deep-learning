@@ -1,5 +1,4 @@
 # Python
-.venv/
 __pycache__/
 *.pyc
 *.pyo
@@ -8,20 +7,15 @@ dist/
 build/
 
 # uv
+.venv/
 .uv-cache/
-.python-version
-
-# 环境文件
-.env
-.env.local
 
 # IDE
-.vscode/settings.json.backup
 *.swp
 *.swo
 *~
 
-# macOS
+# OS
 .DS_Store
 
 # Jupyter
@@ -29,3 +23,7 @@ build/
 
 # Ruff
 .ruff_cache/
+
+# Environment
+.env
+.env.local

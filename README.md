@@ -17,18 +17,20 @@
 2. NumPy（用于数组运算）
 3. Matplotlib（用于画图）
 
-### 安装命令（详细步骤见 04-开发环境配置详解.md）
+### 安装命令
 
 ```bash
-# 1. 创建虚拟环境
-uv venv
+# 1. 同步依赖（自动创建虚拟环境）
+uv sync --all-groups
 
-# 2. 激活环境
-source .venv/bin/activate
+# 2. 运行代码
+uv run python ch01-python基础/code/文件名.py
 
-# 3. 安装所有依赖
-uv pip install -e ".[dev]"
+# 3. 启动 Jupyter
+uv run jupyter notebook
 ```
+
+详细教程：`ch01-python基础/04-开发环境配置详解.md`
 
 ## 学习路线
 

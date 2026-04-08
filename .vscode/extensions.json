@@ -1,27 +1,9 @@
 {
   "recommendations": [
-    // Python 开发
     "ms-python.python",
     "ms-python.vscode-pylance",
-    "ms-python.debugpy",
-    
-    // Jupyter Notebook
     "ms-toolsai.jupyter",
-    "ms-toolsai.jupyter-keymap",
-    "ms-toolsai.jupyter-renderers",
-    "ms-toolsai.vscode-jupyter-cell-tags",
-    "ms-toolsai.vscode-jupyter-slideshow",
-    
-    // 格式化和 Lint
     "charliermarsh.ruff",
-    
-    // Markdown
-    "yzhang.markdown-all-in-one",
-    "davidanson.vscode-markdownlint",
-    "esbenp.prettier-vscode",
-    
-    // 其他实用工具
-    "gruntfuggly.todo-tree",
-    "oderwat.indent-rainbow"
+    "yzhang.markdown-all-in-one"
   ]
 }

@@ -13,9 +13,6 @@
   "files.autoSaveDelay": 1000,
   "editor.formatOnSave": true,
   "editor.formatOnType": true,
-  "editor.codeActionsOnSave": {
-    "source.organizeImports": "explicit"
-  },
   
   // Ruff 格式化配置
   "[python]": {
@@ -29,48 +26,23 @@
   // Markdown 配置
   "[markdown]": {
     "editor.wordWrap": "on",
-    "editor.quickSuggestions": true,
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  
-  // 文件关联
-  "files.associations": {
-    "*.py": "python",
-    "*.md": "markdown"
+    "editor.quickSuggestions": true
   },
   
   // 排除的文件和文件夹
   "files.exclude": {
     "**/__pycache__": true,
-    "**/.ruff_cache": true,
-    "**/.venv": false
+    "**/.ruff_cache": true
   },
   "files.watcherExclude": {
     "**/.venv/**": true,
-    "**/__pycache__/**": true
+    "**/__pycache__/**": true,
+    "**/.uv-cache/**": true
   },
   
-  // 终端配置
-  "terminal.integrated.cwd": "${workspaceFolder}",
-  
   // Python 分析
-  "python.analysis.extraPaths": [
-    "${workspaceFolder}/ch01-python基础",
-    "${workspaceFolder}/ch02-感知机",
-    "${workspaceFolder}/ch03-神经网络",
-    "${workspaceFolder}/ch04-神经网络的学习",
-    "${workspaceFolder}/ch05-误差反向传播法",
-    "${workspaceFolder}/ch06-学习技巧",
-    "${workspaceFolder}/ch07-卷积神经网络",
-    "${workspaceFolder}/ch08-深度学习进阶"
-  ],
   "python.analysis.typeCheckingMode": "basic",
   
-  // Jupyter 内核选择
-  "jupyter.kernels.excludePythonEnvironments": [],
-  "jupyter.kernels.filter": [],
-  
-  // 自动补全
-  "python.autoComplete.extraPaths": [],
-  "python.analysis.autoImportCompletions": true
+  // 终端配置
+  "terminal.integrated.cwd": "${workspaceFolder}"
 }
