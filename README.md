@@ -17,12 +17,26 @@
 2. NumPy（用于数组运算）
 3. Matplotlib（用于画图）
 
-### 安装命令
+### 安装命令（详细步骤见 04-开发环境配置详解.md）
+
 ```bash
-pip install numpy matplotlib
+# 1. 创建虚拟环境
+uv venv
+
+# 2. 激活环境
+source .venv/bin/activate
+
+# 3. 安装所有依赖
+uv pip install -e ".[dev]"
 ```
 
 ## 学习路线
+
+### 第 0 步：环境搭建（必读）
+
+开始前请先阅读 `ch01-python基础/04-开发环境配置详解.md`，学会如何安装依赖。
+
+### 第 1-8 章
 
 本书共 8 章，建议按顺序学习：
 
