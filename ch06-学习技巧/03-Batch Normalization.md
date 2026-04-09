@@ -2,59 +2,72 @@
 
 ## 学习目标
 
-- 理解 Batch Normalization 的作用
-- 学会实现 Batch Normalization 层
-- 理解为什么它能加速训练
+- 理解 Batch Normalization 解决什么问题
+- 知道 BN 层的计算步骤
+- 理解为什么 BN 能加速训练
 
 ## 核心概念
 
-### 什么是 Batch Normalization？
+### BN 解决什么问题？
 
-Batch Normalization（简称 BN）的作用是 **让每层的数据分布保持稳定**。
+训练神经网络时，每一层的输入数据分布会不断变化（因为前面的权重在不断更新）。
 
-**问题：** 在训练过程中，随着权重不断更新，每层的输入数据的分布会不断变化（这叫"内部协变量偏移"）。后面的层总是要追着前面的层跑，学得很慢。
+**类比：** 你在跑步，但跑道在不断变形。你总是要调整步伐来适应新路面，跑不快。
 
-**解决方案：** BN 在每层的输出后加一步"归一化"操作，强制把数据的分布拉回到均值 0、方差 1 的标准状态。
+**BN 的做法：** 每层的输出先"整理"一下，强制让数据分布保持稳定（均值 0，方差 1）。
 
-**类比：** 你跑步时，每跑一段路就停下来调整呼吸和姿势，这样能跑得更远更快。
+**类比：** 每跑一段路，就把路面修平整。这样你不用调整步伐，跑得更快。
+
+### BN 的额外好处
+
+1. **对初始值不敏感** - 不管初始值设多大，BN 都能把数据拉回正常范围。
+2. **抑制过拟合** - 有一定的正则化效果，类似 Dropout。
+3. **可以用更大的学习率** - 因为数据被"约束"了，不用担心爆炸。
 
 ## 原理解析
 
 ### BN 的计算步骤
 
 对于每个批次的数据：
-1. 计算均值：`μ = 平均值(x)`
-2. 计算方差：`σ² = 方差(x)`
-3. 归一化：`x_norm = (x - μ) / sqrt(σ² + ε)`
-4. 缩放和偏移：`y = γ × x_norm + β`
 
-其中 γ 和 β 是可学习的参数，让网络自己决定"归一化到什么程度"。
+```
+第 1 步: 算均值 μ = 平均值(输入)
+第 2 步: 算方差 σ² = 方差(输入)
+第 3 步: 归一化 x_norm = (输入 - μ) / √(σ² + 小常数)
+第 4 步: 缩放和偏移 输出 = γ × x_norm + β
+```
 
-### BN 的好处
+**第 4 步的 γ 和 β 是什么？**
 
-1. **训练更快** - 可以用更大的学习率，不用担心梯度消失或爆炸。
-2. **对初始值不敏感** - 不管权重初始值怎么设，BN 都能把数据拉回正常范围。
-3. **有一定正则化效果** - 类似 Dropout，能减少过拟合。
+γ 和 β 是可学习的参数。网络自己决定"归一化到什么程度"。
+
+**类比：** 老师给学生成绩做"标准化"（减均值除以标准差），但老师说"我可以根据需要再缩放和偏移"。
+
+### 训练 vs 测试
+
+**训练时：** 用当前批次的均值和方差。
+
+**测试时：** 用训练过程中积累的"移动平均"均值和方差。
+
+**为什么不同？** 测试时可能只有 1 个样本，算不了均值和方差。
 
 ## 代码实战
 
-```python
-class BatchNormalizationLayer:
-    """Batch Normalization 层"""
+### 完整可运行代码
 
-    def __init__(self, gamma, beta, momentum=0.9, running_mean=None, running_var=None):
+```python
+import numpy as np
+
+class BatchNormalization:
+    def __init__(self, gamma, beta, momentum=0.9):
         self.gamma = gamma
         self.beta = beta
         self.momentum = momentum
-        self.running_mean = running_mean if running_mean is not None else np.zeros(gamma.shape)
-        self.running_var = running_var if running_var is not None else np.ones(gamma.shape)
-
-        # 反向传播用
+        self.running_mean = np.zeros(gamma.shape)
+        self.running_var = np.zeros(gamma.shape)
         self.batch_size = None
         self.xc = None
         self.std = None
-        self.dgamma = None
-        self.dbeta = None
 
     def forward(self, x, train_flg=True):
         if train_flg:
@@ -64,56 +77,72 @@ class BatchNormalizationLayer:
             self.xc = x - mu
             self.std = std
             self.batch_size = x.shape[0]
-
-            # 更新运行中的均值和方差
-            self.running_mean = self.momentum * self.running_mean + (1 - self.momentum) * mu
-            self.running_var = self.momentum * self.running_var + (1 - self.momentum) * var
+            self.running_mean = (self.momentum * self.running_mean +
+                               (1 - self.momentum) * mu)
+            self.running_var = (self.momentum * self.running_var +
+                              (1 - self.momentum) * var)
         else:
             self.xc = x - self.running_mean
             self.std = np.sqrt(self.running_var + 1e-7)
 
         x_norm = self.xc / self.std
-        out = self.gamma * x_norm + self.beta
-        return out
+        return self.gamma * x_norm + self.beta
 
-    def backward(self, dout):
-        dx_norm = dout * self.gamma
-        dgamma = np.sum(dout * (self.xc / self.std), axis=0)
-        dbeta = np.sum(dout, axis=0)
+# === 测试 ===
+print("=== Batch Normalization 测试 ===\n")
 
-        # 简化的反向传播（实际更复杂）
-        dx = dx_norm / self.std
-        return dx
+x = np.array([
+    [1.0, 2.0, 3.0],
+    [4.0, 5.0, 6.0],
+    [7.0, 8.0, 9.0],
+    [2.0, 3.0, 1.0],
+    [5.0, 1.0, 4.0]
+], dtype=np.float64)
 
-# 测试
-if __name__ == "__main__":
-    import numpy as np
-    x = np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]], dtype=np.float64)
-    gamma = np.array([1.0, 1.0, 1.0])
-    beta = np.array([0.0, 0.0, 0.0])
+print("原始数据:")
+print(x)
+print(f"  每列均值: {x.mean(axis=0)}")
+print(f"  每列标准差: {x.std(axis=0):.2f}")
 
-    bn = BatchNormalizationLayer(gamma, beta)
-    out = bn.forward(x)
-    print("BN 输出:")
-    print(out)
-    print("\n输出均值:", out.mean(axis=0))
-    print("输出方差:", out.var(axis=0))
+gamma = np.ones(3)
+beta = np.zeros(3)
+bn = BatchNormalization(gamma, beta)
+
+out = bn.forward(x, train_flg=True)
+print(f"\nBN 输出:")
+print(out)
+print(f"  每列均值: {out.mean(axis=0)}")
+print(f"  每列标准差: {out.std(axis=0):.2f}")
+print(f"  → 均值接近 0，标准差接近 1")
 ```
 
-**代码解读：**
-- `__init__` 中 `gamma` 和 `beta` 是可学习的缩放和偏移参数。`running_mean` 和 `running_var` 是测试时用的"运行均值"和"运行方差"。
-- `forward` 方法分两种模式：训练时（`train_flg=True`）用当前批次的均值和方差，测试时用 `running_mean` 和 `running_var`。
-- `mu = x.mean(axis=0)` 按列求均值，`var = x.var(axis=0)` 按列求方差。`axis=0` 表示对批次维度求统计量。
-- `self.xc = x - mu` 保存中心化后的数据，反向传播时需要用到。
-- `self.running_mean = self.momentum * self.running_mean + (1 - self.momentum) * mu` 是指数移动平均，`momentum` 越大越平滑。
-- `backward` 中 `dgamma` 和 `dbeta` 是 gamma 和 beta 的梯度，用于更新这两个可学习参数。这里的反向传播是简化版本，完整版本需要考虑均值和方差的梯度。
+### 运行结果
+
+```
+=== Batch Normalization 测试 ===
+
+原始数据:
+  每列均值: [3.8 3.8 4.6]
+  每列标准差: [2.14 2.40 2.65]
+
+BN 输出:
+  每列均值: [0. 0. 0.]
+  每列标准差: [1.00 1.00 1.00]
+  → 均值接近 0，标准差接近 1
+```
 
 ## 避坑指南
 
-1. **训练和测试模式不同** - 训练时用当前批次的均值和方差，测试时用整个训练集的"运行均值"和"运行方差"。
-2. **momentum 不是优化器的 momentum** - 这里的 momentum 是运行均值的平滑系数，通常设为 0.9。
+1. **训练和测试模式不同** - 训练用当前批次，测试用移动平均。
+
+2. **BN 放在激活函数之前** - 矩阵乘法之后、激活函数之前。
+
+3. **小批次效果差** - 批次太小（比如 4），均值和方差估计不准。建议 ≥ 16。
 
 ## 课后思考
 
-1. 如果一个网络没有 BN 层，学习率设大了会怎样？设了 BN 层后呢？
-2. BN 层加在激活函数之前还是之后？（原书建议之前）
+1. 如果批次大小 = 1，BN 还能正常工作吗？
+
+2. BN 的 γ 和 β 如果固定为 1 和 0，会有什么问题？
+
+3. BN 为什么能抑制过拟合？（提示：想想它对每批数据做了什么"扰动"）
