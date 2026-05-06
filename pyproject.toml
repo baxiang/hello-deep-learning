@@ -10,6 +10,7 @@ dependencies = [
     "jupyter>=1.1",
     "notebook>=7.0",
     "ipykernel>=6.29",
+    "playwright>=1.59.0",
 ]
 
 [dependency-groups]
@@ -20,6 +21,10 @@ dev = [
 
 [tool.uv]
 cache-dir = ".uv-cache"
+
+[[tool.uv.index]]
+url = "https://pypi.tuna.tsinghua.edu.cn/simple"
+default = true
 
 [tool.ruff]
 line-length = 88

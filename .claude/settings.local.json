@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__webfetch__web_fetch",
+      "Bash(uv run ruff check:*)",
+      "Bash(uv run ruff format:*)",
+      "Bash(uv run python:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\ndocs: 新增 ch09-ch12 进阶章节（20篇笔记+12个代码文件）\n\n- ch09 循环神经网络：序列数据、RNN/LSTM/GRU原理、文本生成\n- ch10 注意力机制：QKV框架、自注意力、多头注意力、Transformer\n- ch11 计算机视觉进阶：图像增广、微调、目标检测、语义分割、风格迁移\n- ch12 自然语言处理：词嵌入、预训练模型、情感分析、文本分类\nEOF\n\\)\")",
+      "Bash(git push:*)",
+      "Bash(git commit:*)"
+    ]
+  }
+}
